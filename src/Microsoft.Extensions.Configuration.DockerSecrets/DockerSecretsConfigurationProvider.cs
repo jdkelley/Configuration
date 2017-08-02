@@ -26,6 +26,13 @@ namespace Microsoft.Extensions.Configuration.DockerSecrets
             return key.Replace("__", ConfigurationPath.KeyDelimiter);
         }
 
+        private static string TrimNewLine(string value)
+        {
+            return value.EndsWith(Environment.NewLine)
+                ? value.Substring(0, value.Length - 1)
+                : value;
+        }
+
         /// <summary>
         /// Loads the docker secrets.
         /// </summary>
@@ -67,7 +74,7 @@ namespace Microsoft.Extensions.Configuration.DockerSecrets
                 {
                     if (Source.IgnoreCondition == null || !Source.IgnoreCondition(file.Name))
                     {
-                        Data.Add(NormalizeKey(file.Name), streamReader.ReadToEnd());
+                        Data.Add(NormalizeKey(file.Name), TrimNewLine(streamReader.ReadToEnd()));
                     }
                 }
             }
